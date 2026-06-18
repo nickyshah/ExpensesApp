@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  overscroll-behavior-y: none;
+}
+
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@layer components {
+  .card {
+    @apply bg-white dark:bg-gray-900 rounded-2xl shadow-card border border-gray-200 dark:border-gray-800;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all active:scale-95 select-none;
+  }
+  .btn-primary {
+    @apply btn bg-brand-600 text-white hover:bg-brand-700 px-4 py-3;
+  }
+  .btn-secondary {
+    @apply btn bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-4 py-3;
+  }
+  .btn-danger {
+    @apply btn bg-expense text-white hover:bg-gray-900 px-4 py-3;
+  }
+  .btn-ghost {
+    @apply btn bg-transparent text-gray-600 dark:text-gray-300 px-3 py-2;
+  }
+
+  .input {
+    @apply w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900
+           px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent
+           placeholder:text-gray-500;
+  }
+
+  .label {
+    @apply text-sm font-medium text-gray-600 dark:text-gray-300 mb-1.5 block;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-medium transition-colors;
+  }
+
+  .progress-track {
+    @apply w-full h-2.5 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden;
+  }
+  .progress-bar {
+    @apply h-full rounded-full transition-all duration-500;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+.swipe-container {
+  position: relative;
+  overflow: hidden;
+  touch-action: pan-y;
+}
+.swipe-content {
+  transition: transform 0.2s ease-out;
+  background: inherit;
+  position: relative;
+  z-index: 1;
+}
+.swipe-actions {
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  display: flex;
+  align-items: stretch;
+}

@@ -1,0 +1,138 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id              Int      @id @default(autoincrement())
+  name            String   @unique
+  type            String   @default("bank")
+  icon            String   @default("🏦")
+  opening_balance Float    @default(0)
+  is_archived     Int      @default(0)
+  sort_order      Int      @default(0)
+  created_at      String   @default(dbgenerated("(datetime('now'))"))
+
+  transactions_from Transaction[] @relation("fromAccount")
+  transactions_to   Transaction[] @relation("toAccount")
+  recurring_bills   RecurringBill[]
+
+  @@map("accounts")
+}
+
+model Category {
+  id          Int    @id @default(autoincrement())
+  name        String
+  type        String
+  icon        String @default("💰")
+  color       String @default("#64748B")
+  is_default  Int    @default(0)
+  is_archived Int    @default(0)
+  sort_order  Int    @default(0)
+
+  transactions    Transaction[]
+  recurring_bills RecurringBill[]
+  budgets         Budget[]
+  budget_template BudgetTemplate?
+
+  @@unique([name, type])
+  @@map("categories")
+}
+
+model Tag {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  transactions TransactionTag[]
+
+  @@map("tags")
+}
+
+model TransactionTag {
+  transaction_id Int
+  tag_id         Int
+  transaction    Transaction @relation(fields: [transaction_id], references: [id], onDelete: Cascade)
+  tag            Tag         @relation(fields: [tag_id], references: [id], onDelete: Cascade)
+
+  @@id([transaction_id, tag_id])
+  @@map("transaction_tags")
+}
+
+model RecurringBill {
+  id             Int     @id @default(autoincrement())
+  name           String
+  amount         Float
+  frequency      String
+  next_due_date  String
+  account_id     Int
+  category_id    Int
+  payment_method String? @default("bank")
+  notes          String?
+  is_active      Int     @default(1)
+  created_at     String  @default(dbgenerated("(datetime('now'))"))
+
+  account      Account       @relation(fields: [account_id], references: [id])
+  category     Category      @relation(fields: [category_id], references: [id])
+  transactions Transaction[]
+
+  @@index([next_due_date])
+  @@map("recurring_bills")
+}
+
+model Transaction {
+  id             Int     @id @default(autoincrement())
+  type           String
+  amount         Float
+  date           String
+  account_id     Int
+  to_account_id  Int?
+  category_id    Int?
+  source         String?
+  payment_method String?
+  notes          String?
+  recurring_id   Int?
+  created_at     String  @default(dbgenerated("(datetime('now'))"))
+  updated_at     String  @default(dbgenerated("(datetime('now'))"))
+
+  account    Account        @relation("fromAccount", fields: [account_id], references: [id])
+  to_account Account?       @relation("toAccount", fields: [to_account_id], references: [id])
+  category   Category?      @relation(fields: [category_id], references: [id])
+  recurring  RecurringBill? @relation(fields: [recurring_id], references: [id])
+  tags       TransactionTag[]
+
+  @@index([date])
+  @@index([account_id])
+  @@index([category_id])
+  @@index([type])
+  @@map("transactions")
+}
+
+model Budget {
+  id          Int    @id @default(autoincrement())
+  category_id Int
+  month       String
+  amount      Float
+  category    Category @relation(fields: [category_id], references: [id])
+
+  @@unique([category_id, month])
+  @@map("budgets")
+}
+
+model BudgetTemplate {
+  category_id Int    @id
+  amount      Float
+  category    Category @relation(fields: [category_id], references: [id])
+
+  @@map("budget_templates")
+}
+
+model Setting {
+  key   String @id
+  value String?
+
+  @@map("settings")
+}
