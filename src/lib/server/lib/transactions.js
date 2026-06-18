@@ -1,4 +1,4 @@
-import { prisma } from '../db/prisma.js';
+import { prisma } from '../prisma.js';
 
 export const transactionInclude = {
   account: { select: { name: true, icon: true } },
@@ -31,15 +31,6 @@ export function formatTransaction(row) {
     category_color: row.category?.color ?? null,
     tags: (row.tags || []).map((tt) => ({ id: tt.tag.id, name: tt.tag.name })),
   };
-}
-
-export async function getTagsFor(transactionId) {
-  const rows = await prisma.transactionTag.findMany({
-    where: { transaction_id: transactionId },
-    include: { tag: { select: { id: true, name: true } } },
-    orderBy: { tag: { name: 'asc' } },
-  });
-  return rows.map((r) => ({ id: r.tag.id, name: r.tag.name }));
 }
 
 export async function setTags(transactionId, tagNames = []) {

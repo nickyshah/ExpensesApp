@@ -1,4 +1,4 @@
-import { prisma } from '../db/prisma.js';
+import { prisma } from '../prisma.js';
 import { stringify } from 'csv-stringify/sync';
 import { parse } from 'csv-parse/sync';
 import { isValidDate, isValidAmount } from '../utils/validators.js';

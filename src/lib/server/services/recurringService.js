@@ -1,9 +1,6 @@
-import { prisma } from '../db/prisma.js';
-import { nextDueDate, todayISO } from '../utils/dateUtils.js';
+import { prisma } from '../prisma.js';
+import { nextDueDate, todayISO, addDays, toISODate } from '../utils/dateUtils.js';
 
-/**
- * Mark a recurring bill as paid: creates an expense transaction and advances next_due_date.
- */
 export async function markBillPaid(billId, { date, accountId, amount, notes } = {}) {
   const bill = await prisma.recurringBill.findUnique({ where: { id: billId } });
   if (!bill) throw new Error('Recurring bill not found');
@@ -34,17 +31,12 @@ export async function markBillPaid(billId, { date, accountId, amount, notes } = 
   return { transaction, bill: updatedBill };
 }
 
-/**
- * Returns bills due within `withinDays` days (including overdue), sorted by due date.
- */
 export async function getUpcomingBills(withinDays = 14) {
   const today = todayISO();
-  const cutoff = new Date();
-  cutoff.setDate(cutoff.getDate() + withinDays);
-  const cutoffISO = cutoff.toISOString().slice(0, 10);
+  const cutoff = addDays(today, withinDays);
 
   const bills = await prisma.recurringBill.findMany({
-    where: { is_active: 1, next_due_date: { lte: cutoffISO } },
+    where: { is_active: 1, next_due_date: { lte: cutoff } },
     include: {
       category: { select: { name: true, icon: true } },
       account: { select: { name: true } },

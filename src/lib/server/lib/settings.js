@@ -1,4 +1,4 @@
-import { prisma } from '../db/prisma.js';
+import { prisma } from '../prisma.js';
 
 export async function getSetting(key) {
   const row = await prisma.setting.findUnique({ where: { key } });

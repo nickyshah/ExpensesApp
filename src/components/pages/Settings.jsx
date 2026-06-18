@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ArrowLeft, Sun, Moon, Monitor, Lock, Unlock, Download, Upload, Database, Plus, Pencil, Trash2 } from 'lucide-react';
+import { ArrowLeft, Sun, Moon, Monitor, Lock, Unlock, Download, Upload, Plus, Pencil, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/state/store';
 import { api } from '@/api/client';
@@ -268,7 +268,6 @@ export default function Settings() {
           <div className="card overflow-hidden divide-y divide-gray-100 dark:divide-gray-800">
             <SettingRow icon={Download} label="Export CSV" sub="Download all transactions as CSV" onClick={() => downloadURL('/api/data/export/csv')} />
             <SettingRow icon={Download} label="Full JSON Export" sub="All data including accounts, budgets, recurring" onClick={() => downloadURL('/api/data/export/json')} />
-            <SettingRow icon={Database} label="Download Database Backup" sub="Raw SQLite .db file" onClick={() => downloadURL('/api/data/backup')} />
             <div className="relative">
               <SettingRow icon={Upload} label={importing ? 'Importing...' : 'Import CSV'} sub="Import transactions from CSV file" onClick={() => !importing && document.getElementById('csv-import').click()} />
               <input id="csv-import" type="file" accept=".csv,text/csv" className="sr-only" onChange={handleImport} />

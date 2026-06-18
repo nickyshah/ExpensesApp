@@ -1,9 +1,5 @@
-import { prisma } from '../db/prisma.js';
+import { prisma } from '../prisma.js';
 
-/**
- * Returns the current balance for a single account:
- * opening_balance + income - expense + transfers_in - transfers_out
- */
 export async function getAccountBalance(accountId) {
   const account = await prisma.account.findUnique({ where: { id: accountId } });
   if (!account) return null;

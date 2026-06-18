@@ -1,6 +1,3 @@
-// All dates stored/handled as 'YYYY-MM-DD' strings (local AU date, no TZ math needed
-// since this is a single-user self-hosted app - server should run in AU timezone).
-
 export function todayISO() {
   const d = new Date();
   return toISODate(d);
@@ -32,9 +29,8 @@ export function addMonths(dateStr, months) {
   const d = new Date(dateStr + 'T00:00:00');
   const targetMonth = d.getMonth() + months;
   const targetDate = new Date(d.getFullYear(), targetMonth, d.getDate());
-  // Handle month overflow (e.g. Jan 31 + 1 month -> Feb 28/29)
   if (targetDate.getMonth() !== ((targetMonth % 12) + 12) % 12) {
-    targetDate.setDate(0); // last day of previous month
+    targetDate.setDate(0);
   }
   return toISODate(targetDate);
 }
